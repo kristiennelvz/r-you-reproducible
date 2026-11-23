@@ -17,9 +17,9 @@ Please bring your laptop and charger. If the setup check fails, email Kristien: 
 
 | Time | Session |
 |-------------|-----------------------------------------------------------|
-| 08:00 ??? 08:30 | Arrival and registration |
-| 08:30 ??? 09:15 | **Introduction: principles of reproducible microbiome data** |
-| 09:15 ??? 10:30 | **Setting up a reproducible project** |
-| 10:30 ??? 10:45 | Break |
-| 10:45 ??? 12:00 | **Hands-on metadata wrangling and harmonisation** |
-| 12:00 ??? 12:30 | **Closing the loop: render and write up reproducible methods** |
+| 08:00 - 08:30 | Arrival and registration |
+| 08:30 - 09:15 | **Introduction: principles of reproducible microbiome data** |
+| 09:15 - 10:30 | **Setting up a reproducible project** |
+| 10:30 - 10:45 | Break |
+| 10:45 - 12:00 | **Hands-on metadata wrangling and harmonisation** |
+| 12:00 - 12:30 | **Closing the loop: render and write up reproducible methods** |
