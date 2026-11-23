@@ -1,0 +1,17 @@
+sample;subject_id;age_years;gender;bmi_kg_m2;date_collected;freezer_temp_C;specimen
+JHB_001;JHB-S01;63;1;30,8;45862;-80;stool
+JHB_002;JHB-S02;59;1;19,5;45739;-80;stool
+JHB_003;JHB-S03;999;1;29,4;45804;-80;stool
+JHB_004;JHB-S04;59;1;36,2;45722;-80;Stool sample
+JHB_005;JHB-S04;60;1;27,3;45730;-80;stool
+JHB_006;JHB-S06;44;1;27,1;45825;-80;Stool sample
+JHB_007;JHB-S07;29;999;28,9;45777;-80;stool
+JHB_008;JHB-S08;47;1;25,8;45762;-80;stool
+JHB_009;JHB-S09;25;2;36,9;45802;-80;Stool sample
+JHB_010;JHB-S10;18;1;999;45748;-80;faeces
+JHB_011;JHB-S11;52;1;40,1;45793;-80;faeces
+JHB_012;JHB-S12;28;2;31,1;45905;-80;Stool sample
+JHB_013;JHB-S13;57;2;31,0;45717;-80;Stool sample
+JHB_014;JHB-S14;36;2;33,6;2025-07-15;-80;Stool sample
+JHB_015;JHB-S15;34;1;40,0;45714;-80;Stool sample
+JHB_016;JHB-S16;61;1;35,6;45716;-80;Stool sample

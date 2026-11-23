@@ -1,0 +1,6 @@
+Site B (Johannesburg) codebook
+
+gender: 1 = male, 2 = female
+999 = missing (any variable)
+date_collected: exported from Excel
+freezer_temp_C: storage temperature in degrees Celsius

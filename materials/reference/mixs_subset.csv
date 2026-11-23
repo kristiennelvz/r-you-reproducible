@@ -1,0 +1,11 @@
+term,description,expected_format,example
+samp_name,Unique sample identifier used throughout the study,Text; one value per sample; no spaces,CT001
+host_subject_id,Identifier of the participant the sample came from (not their name or hospital number),Text,P101
+collection_date,Date the sample was collected,ISO 8601 date (YYYY-MM-DD),2025-03-14
+geo_loc_name,Country and region where the sample was collected,country:region,South Africa:Western Cape
+env_medium,"The material sampled, ideally as an ontology term",term [ONTOLOGY:ID],feces [UBERON:0001988]
+host_age,Age of the host at the time of sampling,Number with unit (years),34
+host_sex,Sex of the host,Controlled vocabulary (e.g. female; male; or a missing-value term),female
+host_body_mass_index,Body mass index of the host,Number (kg/m2),24.5
+samp_store_temp,Temperature at which the sample was stored,Number (degrees Celsius),-80
+missing values,How to record a value that is absent,"Use a reason, not a blank: not collected; not provided; not applicable; restricted access",not collected

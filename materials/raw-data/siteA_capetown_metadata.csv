@@ -1,0 +1,20 @@
+Sample ID,Participant,Age,Sex,BMI,Collection Date,Storage temp,Sample type,Notes
+CT-001,P101,39y,f,35.7,2025-03-03,-80,stool,
+CT-002,P102,26 years, m,34.4,2025-02-21,minus 80,stool,
+CT-003 ,P103,41 years,M,"34,2",2025/04/06,minus 80,stool,
+ct-004,P104,60, m,19.0,09 Mar 2025,minus 80,stool,
+CT-005,P105,56 years, m,"35,4",2025-09-17,-80,stool,
+CT-006,P106,N/A,F,"29,7",26-09-2025,-80C,stool,
+CT-007,P107,33,f,30.7,2025-06-04,-80 °C,stool,
+CT-008,P108,340,male,"34,2",2025-06-21,-80,stool,
+CT-009,P109,28 years,male,,2025-02-09,minus 80,stool,
+CT-009,P109,28 years,male,,2025-02-09,minus 80,stool,
+CT-010,P110,51,Male,34.3,2025/05/31,minus 80,stool,
+CT-011,P111,64, m,27.3,27-07-2025,-80 °C,stool,"sample thawed once, re-frozen"
+CT-012,P112,50,-,20.4,2025-09-20,-80,stool,
+CT-013,P113,56,female,30.4,27-05-2025,-80 °C,stool,"participant on antibiotics, see CRF"
+CT-014,P114,59y,male,"21,5",22 Jul 2025,-80,stool,
+CT-015,P115,57,Male,missing,06-03-2025,-80C,stool,
+CT-016,P116,31,M,"18,8",2025/06/14,-80 °C,stool,
+CT-017,P117,20 years,Female ,28.5,28 Sep 2025,-20,stool,
+CT-018,P118,55,f,21.5,31-05-2025,-80C,stool,

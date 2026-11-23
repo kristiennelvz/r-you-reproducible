@@ -1,0 +1,251 @@
+---
+title: "Harmonising sample metadata across three sites"
+author: "[Your name]"
+date: today
+format:
+  html:
+    toc: true
+    embed-resources: true
+execute:
+  warning: true
+---
+
+## About this document
+
+This document records every step from the raw metadata files in `data/raw/` to one harmonised metadata table in `data/processed/`. Nothing is edited by hand: to change a result, change the code and render again.
+
+The data are synthetic and were created for this workshop. They mimic gut microbiome studies at three South African sites (Cape Town, Johannesburg and Durban).
+
+Chunks marked `TODO` are for you to complete. Every chunk already runs, so you can render the document at any point and watch the results improve as you fill in the gaps.
+
+## Setup
+
+```{r}
+#| label: setup
+#| message: false
+library(here)       # file paths relative to the project root
+library(readr)      # reading text files
+library(dplyr)      # data manipulation
+library(tidyr)
+library(stringr)    # text cleaning
+library(lubridate)  # dates
+library(janitor)    # clean_names(), convert_to_date()
+
+# Every way the sites wrote "missing"
+na_codes <- c("", "NA", "N/A", "-", "missing", "999", "unknown")
+```
+
+## 1. Read the raw data
+
+Everything is read as text first, so that nothing is silently converted or lost. Each file has its own quirks.
+
+```{r}
+#| label: read-raw
+site_a_raw <- read_csv(
+  here("data", "raw", "siteA_capetown_metadata.csv"),
+  col_types = cols(.default = col_character()), na = character()
+)
+
+# Site B uses semicolons as separators and decimal commas
+site_b_raw <- read_delim(
+  here("data", "raw", "siteB_johannesburg_metadata.csv"),
+  delim = ";", col_types = cols(.default = col_character()), na = character()
+)
+
+# Site C is tab-separated and has a second header row holding the units
+site_c_raw <- read_tsv(
+  here("data", "raw", "siteC_durban_metadata.tsv"),
+  col_types = cols(.default = col_character()), na = character()
+) |>
+  slice(-1)  # drop the units row (record the units in the data dictionary instead)
+
+glimpse(site_a_raw)
+```
+
+::: {.callout-tip}
+## Look before you clean
+Use `View(site_a_raw)`, `count(site_a_raw, Sex)` and `distinct(site_a_raw, Storage temp)` (with backticks around names containing spaces) in the console to find the problems. Make a list of what needs fixing before writing any cleaning code.
+:::
+
+## 2. Site A (Cape Town): worked example
+
+```{r}
+#| label: clean-site-a
+site_a <- site_a_raw |>
+  clean_names() |>                                       # "Sample ID" -> sample_id
+  mutate(across(everything(), str_trim)) |>              # remove stray spaces
+  mutate(across(everything(), ~ if_else(.x %in% na_codes, NA_character_, .x))) |>
+  distinct() |>                                          # remove exact duplicate rows
+  mutate(
+    samp_name            = str_to_upper(str_remove_all(sample_id, "[-_ ]")),
+    host_subject_id      = participant,
+    site                 = "Cape Town",
+    geo_loc_name         = "South Africa:Western Cape",
+    host_age             = parse_number(age),
+    host_sex             = case_when(
+      str_to_lower(sex) %in% c("f", "female") ~ "female",
+      str_to_lower(sex) %in% c("m", "male")   ~ "male"
+    ),
+    host_body_mass_index = parse_number(str_replace(bmi, ",", ".")),
+    collection_date      = as_date(parse_date_time(collection_date, orders = c("Ymd", "dmY", "dbY"))),
+    samp_store_temp      = parse_number(str_replace(storage_temp, "minus ", "-")),
+    notes                = notes
+  )
+
+count(site_a, host_sex)
+```
+
+::: {.callout-warning}
+## One value needs a decision
+One participant at Site A has an age of 340. Do not guess the correct value in the data. Decide what to do (for example, query the site and set it to missing until confirmed), do it in code, and write the decision in `data/README.md`.
+:::
+
+```{r}
+#| label: site-a-age-decision
+# TODO: handle the impossible age, e.g.
+# site_a <- site_a |> mutate(host_age = if_else(host_age > 110, NA_real_, host_age))
+```
+
+## 3. Site B (Johannesburg): your turn
+
+Check `data/raw/siteB_codebook.txt` first.
+
+```{r}
+#| label: clean-site-b
+site_b <- site_b_raw |>
+  clean_names() |>
+  mutate(across(everything(), str_trim)) |>
+  mutate(across(everything(), ~ if_else(.x %in% na_codes, NA_character_, .x))) |>
+  mutate(
+    samp_name            = sample,            # TODO: make it look like JHB001
+    host_subject_id      = subject_id,
+    site                 = "Johannesburg",
+    geo_loc_name         = "South Africa:Gauteng",
+    host_age             = NA_real_,          # TODO
+    host_sex             = NA_character_,     # TODO: use the codebook
+    host_body_mass_index = NA_real_,          # TODO: decimal commas
+    collection_date      = as.Date(NA),       # TODO: Excel serial numbers (hint: janitor::convert_to_date())
+    samp_store_temp      = parse_number(freezer_temp_c),
+    notes                = NA_character_
+  )
+```
+
+## 4. Site C (Durban): your turn
+
+```{r}
+#| label: clean-site-c
+site_c <- site_c_raw |>
+  clean_names() |>
+  mutate(across(everything(), str_trim)) |>
+  mutate(across(everything(), ~ if_else(.x %in% na_codes, NA_character_, .x))) |>
+  mutate(
+    samp_name            = sample_name,       # TODO: make it look like DBN001
+    host_subject_id      = host_id,
+    site                 = "Durban",
+    geo_loc_name         = "South Africa:KwaZulu-Natal",
+    host_age             = NA_real_,          # TODO: age is in months
+    host_sex             = NA_character_,     # TODO
+    host_body_mass_index = parse_number(body_mass_index),
+    collection_date      = as.Date(NA),       # TODO: date and time; keep the date only
+    samp_store_temp      = parse_number(storage),
+    notes                = comments
+  )
+```
+
+## 5. Combine and apply the standard
+
+```{r}
+#| label: harmonise
+mixs_columns <- c("samp_name", "host_subject_id", "site", "geo_loc_name",
+                  "collection_date", "host_age", "host_sex",
+                  "host_body_mass_index", "env_medium", "samp_store_temp", "notes")
+
+harmonised <- bind_rows(site_a, site_b, site_c) |>
+  mutate(
+    env_medium           = "feces [UBERON:0001988]",       # same material at all sites
+    host_body_mass_index = round(host_body_mass_index, 1)  # same precision at all sites
+  ) |>
+  select(all_of(mixs_columns)) |>
+  arrange(samp_name)
+
+head(harmonised)
+```
+
+## 6. Check the result
+
+Write checks as code, so they run every time the data change.
+
+```{r}
+#| label: validate
+validation <- tibble(
+  check = c("Duplicate sample names",
+            "Age outside 18 to 110",
+            "Sex not female/male (or missing)",
+            "Collection date outside 2025",
+            "Stored warmer than -70 °C"),
+  n_problems = c(
+    sum(duplicated(harmonised$samp_name)),
+    sum(!between(harmonised$host_age, 18, 110), na.rm = TRUE),
+    sum(!harmonised$host_sex %in% c("female", "male", NA)),
+    sum(year(harmonised$collection_date) != 2025, na.rm = TRUE),
+    sum(harmonised$samp_store_temp > -70, na.rm = TRUE)
+  )
+)
+validation
+
+# Missing values per column
+harmonised |> summarise(across(everything(), ~ sum(is.na(.x)))) |> pivot_longer(everything(), names_to = "column", values_to = "n_missing")
+```
+
+```{r}
+#| label: flagged-samples
+# Samples a reviewer should know about
+harmonised |> filter(samp_store_temp > -70 | !is.na(notes)) |> select(samp_name, samp_store_temp, notes)
+```
+
+## 7. Merge with the sequencing run sheet
+
+The sequencing facility used its own library names (e.g. `CT001_S12`), and the run includes negative controls and a mock community.
+
+```{r}
+#| label: merge-sequencing
+seq_runs <- read_csv(here("data", "raw", "sequencing_run_sheet.csv"), show_col_types = FALSE) |>
+  mutate(
+    samp_name   = Library_ID,   # TODO: remove the "_S12" part (hint: str_remove())
+    sample_type = if_else(str_detect(samp_name, "^(NEG|NTC|MOCK)"), "control", "sample")
+  )
+
+# Samples with metadata but no sequencing data
+anti_join(harmonised, seq_runs, by = "samp_name") |> select(samp_name, site)
+
+# Sequenced libraries with no metadata (should only be controls)
+anti_join(seq_runs, harmonised, by = "samp_name") |> select(Library_ID, sample_type)
+
+samples_sequenced <- left_join(harmonised, seq_runs, by = "samp_name")
+```
+
+## 8. Save
+
+```{r}
+#| label: save
+dir.create(here("data", "processed"), showWarnings = FALSE)
+write_csv(harmonised, here("data", "processed", "metadata_harmonised.csv"), na = "not provided")
+write_csv(samples_sequenced, here("data", "processed", "metadata_with_sequencing.csv"), na = "not provided")
+```
+
+## 9. Methods (writing exercise)
+
+Inline code fills in the versions automatically, so this text is always true for the run that produced it.
+
+> Sample metadata from three sites were harmonised in R (`r R.version.string`) using readr (v`r packageVersion("readr")`), dplyr (v`r packageVersion("dplyr")`), stringr (v`r packageVersion("stringr")`), lubridate (v`r packageVersion("lubridate")`) and janitor (v`r packageVersion("janitor")`). Variable names and formats followed the MIxS standard (human-associated fields). [TODO: describe how missing values, the impossible age and units were handled.] In total, `r nrow(harmonised)` samples from `r n_distinct(harmonised$site)` sites were included.
+
+**Data availability.** [TODO: e.g. Raw sequence data are available in the European Nucleotide Archive under accession PRJEB00000. Participant metadata are available on request, subject to ethics approval, because of consent restrictions.]
+
+**Code availability.** [TODO: e.g. All code used to process the metadata is available at https://github.com/... (archived at Zenodo, DOI ...).]
+
+## Session information
+
+```{r}
+#| label: session-info
+sessionInfo()
+```

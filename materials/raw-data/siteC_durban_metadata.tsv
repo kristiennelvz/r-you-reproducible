@@ -1,0 +1,16 @@
+SampleName	Host_ID	Age	Host sex	Body mass index	Collection_datetime	Storage	Material	Comments
+		months		kg/m2	SAST	deg C		
+dbn001	D201	429	Female	24.47	2025-07-16 08:30	-80	Faeces	
+dbn002	D202	409	unknown	26.94	2025-04-22 09:30	-80	Faeces	
+dbn003	D203	216	Female	23.32	2025-09-18 11:45	-80	Faeces	
+dbn004	D204	740	F	38.76	2025-04-21 08:00	-80	Faeces	collected at home, delivered to lab within 4 h
+dbn005	D205	573	F	19.28	2025-09-08 12:30	-80	Faeces	
+dbn006	D206	679	M	NA	2025-05-15 12:15	-80	Faeces	
+dbn007	D207	610	female	26.48	2025-09-13 08:30	-80	Faeces	
+dbn008	D208	762	Female	24.27	2025-08-29 12:00	-80	Faeces	low volume, aliquot only
+dbn009	D209	450	female	30.50	2025-04-26 11:00	-80	Faeces	
+dbn010	D210	368	Female	33.29	2025-02-06 15:30	-80	Faeces	
+dbn011	D211		Male	29.21	2025-03-01 09:00	-80	Faeces	
+dbn012	D212	549	Male	25.80	2025-07-03 11:00	-80	Faeces	
+dbn013	D213	538	Male	34.39	2025-05-10 13:15	-80	Faeces	
+dbn014	D214	731	F	32.52	2025-03-19 15:00	-80	Faeces	

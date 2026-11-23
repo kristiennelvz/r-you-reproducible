@@ -1,0 +1,12 @@
+variable,description,type,units,allowed_values,mixs_term,notes
+samp_name,Unique sample identifier,text,,"Site prefix + 3 digits, e.g. CT001",samp_name,
+host_subject_id,Participant identifier,text,,,host_subject_id,
+site,Collection site,text,,Cape Town; Johannesburg; Durban,,
+geo_loc_name,,text,,,geo_loc_name,
+collection_date,,date,,,collection_date,
+host_age,,number,,,host_age,
+host_sex,,text,,,host_sex,
+host_body_mass_index,,number,,,host_body_mass_index,
+env_medium,,text,,,env_medium,
+samp_store_temp,,number,,,samp_store_temp,
+notes,Free-text notes from the site,text,,,,
